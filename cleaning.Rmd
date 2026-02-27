@@ -30,8 +30,17 @@ The code chunk below shows how to load palmerpenguins.
 Also load dplyr, tidyr, skimr, ggplot2, stringr.
 
 ```{r}
+install.packages("palmerpenguins")   
 library(palmerpenguins)
 
+penguins <- palmerpenguins::penguins
+penguins_raw <- palmerpenguins::penguins_raw
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(skimr)
+library(ggplot2)
+library(stringr)
 ```
 
 You can learn more about the palmerpenguins
@@ -41,11 +50,22 @@ The penguin package contains two data sets:
 function to look at the two data sets. You can also
 read over the help for the two data sets (`?penguins` `?penguins_raw`  )
 
+ls()
+
+```{r}
+view(penguins)
+view(penguins_raw)
+```
+
+
+
 Our goal is to go from *penguins_raw *to a new 
 data set *penguins_new* that is as close as you can get it 
 to identical to penguins.   We can test if they
 are the same using the code `identical(penguins, penguins_new)`.
 You can also use `all.equal(penguins, penguins_new)`. 
+
+`identical(penguins, penguins_new)`
 
 ## First step
 
@@ -55,11 +75,11 @@ don't need to worry about the order of the steps.  And write in English, not cod
 
 ## My list of tasks
 
-1. 
-2.
-3.
-4.
-5. 
+1.Remove columns
+2.Remove null/empty rows
+3.Rename Columns
+4.Split column values/names
+5.Concert Daetes
 
 
 ## Comparing data frames
@@ -76,24 +96,31 @@ This contains the test code mentioned above.
 That way you can periodically run it as you are working.   
 
 ###  What happens if you run that code chunk now?
-
+I get an Error: object 'penguins_new' not found
 
 
 In the code chunk below create penguins_new from
 the penguins_raw data set using the assignment operator `<-`. 
 
 ```{r}
-
+penguins_new<-penguins_raw
 ```
 Now run your test code chunk again.
 
 In the code chunk below use base functions to get a sense of the data.  (See slides)
 
 ### What are some things you notice?
-
+[1] "Names: 8 string mismatches"                                       
+ [2] "Attributes: < Length mismatch: comparison on first 2 components >"
+ [3] "Length mismatch: comparison on first 8 components"                
+ [4] "Component 1: 'current' is not a factor"                           
+ [5] "Component 2: 'current' is not a factor"                
 
 ```{r}
-
+head(penguins)
+tail(penguins)
+str(penguins)
+summary(penguins)
 ```
 
 Another way to get a sense of a data set is to use
@@ -103,12 +130,12 @@ Remember: How do you access a package?
 Do that below.
 
 ```{r}
-
+skim(penguins)
 ```
 
 ### Do you notice anything new? What?
 
-
+Skim function provides an in depth summary of the data
 
 ## Start cleaning
 
@@ -156,7 +183,18 @@ Typing `?tolower` in the console would be an example of that.
      Good website on working with strings in R
      
      https://github.com/Cghlewis/data-wrangling-functions/wiki/Strings
-
+     
+```{r}
+#lowercase headings
+names(penguins_new) <- tolower(names(penguins_new)) 
+#lowercase sex column
+penguins_new$sex <- tolower(penguins_new$sex) 
+#Split species column by space to select first value
+penguins_new$species <- sapply(strsplit(penguins_new$species, " "), `[`, 1) 
+#Extract Year From Date
+penguins_new$`date egg` <- format(penguins_new$`date egg`, "%Y")
+```     
+ 
 ### dplyr
 
 For cleaning data the tidyverse package dplyr is extremely useful.  It makes R work similarly to 
@@ -177,6 +215,15 @@ summary is copied from Alison Horst's dplyr tutorial.)
 
 We'll also want to use various other functions for specific tasks.
 
+
+```{r}
+#Choosing columns
+penguins_new <- select(penguins_new, species, island, 'date egg', 'culmen length (mm)', 'culmen depth (mm)', 'flipper length (mm)', 'body mass (g)', sex)
+#Rename columns
+penguins_new <- rename(penguins_new, year = `date egg`, bill_length_mm = 'culmen length (mm)', bill_depth_mm = 'culmen depth (mm)', flipper_length_mm = 'flipper length (mm)', body_mass_g = 'body mass (g)')
+#Reorder Columns
+penguins_new <- relocate(penguins_new, year, .after = sex)
+```     
 ## Getting to work!
 
 Working below in well organized code chunks modify  your penguins_new file.  (I have started you with
