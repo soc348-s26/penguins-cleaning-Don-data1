@@ -50,11 +50,10 @@ The penguin package contains two data sets:
 function to look at the two data sets. You can also
 read over the help for the two data sets (`?penguins` `?penguins_raw`  )
 
-ls()
 
 ```{r}
-view(penguins)
-view(penguins_raw)
+#view(penguins)
+#view(penguins_raw)
 ```
 
 
@@ -79,7 +78,7 @@ don't need to worry about the order of the steps.  And write in English, not cod
 2.Remove null/empty rows
 3.Rename Columns
 4.Split column values/names
-5.Concert Daetes
+5.Concert Dates
 
 
 ## Comparing data frames
@@ -298,6 +297,15 @@ attr(df , "attribute name") <- "newvalue"
 Deleting an attribute completely.
 attr(df , "attribute name") <- NULL
 
+```{r}
+penguins_new$species <- as.factor(penguins_new$species)
+penguins_new$island  <- as.factor(penguins_new$island)
+penguins_new$sex     <- as.factor(penguins_new$sex)
+penguins_new$species <- as.factor(penguins_new$species)
+penguins_new$island  <- as.factor(penguins_new$island)
+penguins_new$sex     <- as.factor(penguins_new$sex)
+penguins_new$year <- as.numeric(penguins_new$year)
+```
 
 ### Test code chunk.
 
@@ -317,7 +325,16 @@ As a special challenge, now add a new variable
 to your data set based on data from the raw data that
 is not currently included. 
 
+```{r}
+penguins_new <- penguins_new |> 
+  mutate(clutch_completion = penguins_raw$`Clutch Completion`)
 
+penguins_new$clutch_completion <- as.factor(penguins_new$clutch_completion)
+```
 
+```{r}
+str(penguins)
+str(penguins_new)
+```
 
 
